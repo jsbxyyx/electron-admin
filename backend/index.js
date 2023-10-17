@@ -28,6 +28,6 @@ router.post("/login", async function(ctx){
 router.use('/users', user.routes());
 
 app.listen(PORT, function () {
-    console.log(`http://127.0.0.1:${PORT}`);
+    console.log(`server listening on http://127.0.0.1:${PORT}`);
 });
 
