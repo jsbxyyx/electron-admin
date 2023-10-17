@@ -107,19 +107,24 @@ export default {
     ...mapMutations('account', ['setUser', 'setPermissions', 'setRoles']),
     onSubmit (e) {
       e.preventDefault()
+      const that = this;
       this.form.validateFields((err) => {
         if (!err) {
           this.logging = true
           const name = this.form.getFieldValue('name')
           const password = this.form.getFieldValue('password')
-          login(name, password).then(this.afterLogin)
+          login(name, password).then(this.afterLogin).catch(err => {
+            console.log(err);
+            that.logging = false;
+          })
         }
       })
     },
     afterLogin(res) {
       this.logging = false
       const r = res.data
-      if (r.code >= 0) {
+      console.log(r);
+      if (r.code == 200) {
         const data = r.data;
         // const {user, permissions, roles} = data.data
         this.setUser({

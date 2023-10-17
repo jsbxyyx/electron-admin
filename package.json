@@ -21,6 +21,10 @@
     "electron": "^27.0.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "koa": "^2.14.2",
+    "koa-body": "^6.0.1",
+    "koa-router": "^11.0.2",
+    "koa-websocket": "^7.0.0"
   }
 }

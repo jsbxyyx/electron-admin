@@ -1,6 +1,15 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-
 const path = require('node:path')
+const { fork } = require('child_process')
+
+var serverProcess = null
+function createServerProcess() {
+    // 开发环境
+    serverProcess = fork(require.resolve('./backend'))
+    serverProcess.on('close', (code) => {
+        console.log('子线程已经退出', code)
+    })
+}
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
@@ -15,13 +24,10 @@ const createWindow = () => {
 
     mainWindow.loadFile('index.html')
     // mainWindow.loadURL("http://127.0.0.1:8080")
-
-    mainWindow.webContents.once("did-finish-load", function(){
-        
-    })
 }
 
 app.whenReady().then(() => {
+    createServerProcess()
     createWindow()
 
     app.on('activate', () => {
@@ -30,6 +36,11 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
+    if (process.platform !== 'darwin') {
+        app.quit()
+        if (serverProcess) {
+            process.kill(serverProcess.pid)
+        }
+    }
 })
 
