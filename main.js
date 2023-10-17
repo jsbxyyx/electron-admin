@@ -1,15 +1,13 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('node:path')
-const { fork } = require('child_process')
 const fs = require('fs')
 
-var serverProcess = null
-function createServerProcess() {
+function createServerProcess(mainWindow) {
     // 开发环境
-    serverProcess = fork(require.resolve('./backend'))
-    serverProcess.on('close', (code) => {
-        console.log('子线程已经退出', code)
-    })
+    const { start } = require('./backend/index');
+    start(() => {
+        mainWindow.webContents.send('server-ready', 1);
+    });
 }
 
 const createWindow = () => {
@@ -19,37 +17,36 @@ const createWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
-    })
+    });
     // Menu.setApplicationMenu(null)
-    const packaged = true //app.isPackaged
+    const packaged = app.isPackaged
     if (!packaged) {
-        mainWindow.loadFile('index.html')
-        mainWindow.webContents.openDevTools()
+        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.send('go-url', "http://127.0.0.1:8080");
     } else {
-        mainWindow.loadURL("http://127.0.0.1:8888/index.html")
+        mainWindow.webContents.send('go-url', "http://127.0.0.1:8888/index.html");
     }
+    mainWindow.loadFile('index.html');
 
-    const paths = fs.readdirSync(__dirname)
-    paths.forEach(function(p) {
-        console.log("file:", p)
+    const paths = fs.readdirSync(__dirname);
+    paths.forEach(function (p) {
+        console.log("file:", p);
     })
+    return mainWindow
 }
 
 app.whenReady().then(() => {
-    createServerProcess()
-    createWindow()
+    mainWindow = createWindow()
+    createServerProcess(mainWindow);
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-})
+    });
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
-        if (serverProcess) {
-            process.kill(serverProcess.pid)
-        }
     }
-})
+});
 
