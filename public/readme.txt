@@ -1,1 +1,1 @@
-frontend package dist
+frontend build dist

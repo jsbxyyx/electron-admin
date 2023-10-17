@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('node:path')
 const { fork } = require('child_process')
+const fs = require('fs')
 
 var serverProcess = null
 function createServerProcess() {
@@ -20,10 +21,18 @@ const createWindow = () => {
         }
     })
     // Menu.setApplicationMenu(null)
-    mainWindow.webContents.openDevTools()
+    const packaged = true //app.isPackaged
+    if (!packaged) {
+        mainWindow.loadFile('index.html')
+        mainWindow.webContents.openDevTools()
+    } else {
+        mainWindow.loadURL("http://127.0.0.1:8888/index.html")
+    }
 
-    mainWindow.loadFile('index.html')
-    // mainWindow.loadURL("http://127.0.0.1:8080")
+    const paths = fs.readdirSync(__dirname)
+    paths.forEach(function(p) {
+        console.log("file:", p)
+    })
 }
 
 app.whenReady().then(() => {

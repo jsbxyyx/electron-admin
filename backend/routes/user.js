@@ -1,11 +1,7 @@
 const router = require('koa-router')();
  
-router.get('/user', (ctx) => {
-  ctx.body = {name:'tanwei'};
-})
- 
-router.get('/userlist', (ctx) => {
-  ctx.body = [{name:'tanwei'},{name:'weiwei'}]
+router.get('/get', (ctx) => {
+  ctx.body = {name:'xxxx'};
 })
  
 module.exports = router;
