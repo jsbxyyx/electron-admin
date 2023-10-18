@@ -4,10 +4,10 @@
 # 安装依赖
 ```
 npm i
-cd frontend && npm i
+cd frontend && npm i && cd ..
 ```
 
-# dev
+# 开发
 启动前端
 ```
 cd frontend
@@ -21,8 +21,5 @@ npm run dev
 
 # 打包
 ```
-cd frontend
-npm run build
-
 npm run make
 ```

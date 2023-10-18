@@ -1,13 +1,13 @@
 {
   "name": "electron-admin",
   "version": "1.0.0",
-  "description": "electron app",
+  "description": "electron admin",
   "main": "main.js",
   "scripts": {
     "dev": "electron .",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "cd frontend && npm run build && cd .. && electron-forge make"
   },
   "author": "jsbxyyx",
   "license": "ISC",
@@ -21,11 +21,6 @@
     "electron": "^26.0.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0",
-    "koa": "^2.14.2",
-    "koa-bodyparser": "^4.4.1",
-    "koa-router": "^11.0.2",
-    "koa-static": "^5.0.0",
-    "koa-websocket": "^7.0.0"
+    "electron-squirrel-startup": "^1.0.0"
   }
 }

@@ -22,3 +22,4 @@ package-lock.json
 # build
 out/
 public/
+!backend/app/public
