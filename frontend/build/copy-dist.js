@@ -8,7 +8,7 @@ const styles = {
 };
 
 const distPath = path.join(__dirname, '../dist/');
-const rootPath = path.join(__dirname, '../../public/');
+const rootPath = path.join(__dirname, '../../backend/app/public/');
 
 console.log('\n\n> Start copying the dist directory...\n');
 
