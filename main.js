@@ -2,22 +2,82 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('node:path');
 const { fork } = require('node:child_process');
 const fs = require('fs');
+const os = require("os");
+const { resourceLimits } = require('node:worker_threads');
 
+var isDev;
 var goUrl = '';
-var serverProcess;
+
+function delDir(dest) {
+    let paths = fs.readdirSync(dest);
+    paths.forEach(function (p) {
+        const target = path.join(dest, p);
+        const st = fs.statSync(target);
+        if (st.isFile()) {
+            // console.log(`\rDelete File: ${target}`);
+            fs.unlinkSync(target);
+        }
+        if (st.isDirectory()) {
+            // console.log(`\rDelete Directory: ${target}`);
+            delDir(target);
+        }
+    });
+    paths = fs.readdirSync(dest);
+    if (!paths.length) {
+        fs.rmdirSync(dest);
+    }
+}
+
+function copyDir(source, dest) {
+    const paths = fs.readdirSync(source);
+    paths.forEach(function (p) {
+        const src = path.join(source, p);
+        const target = path.join(dest, p);
+        const st = fs.statSync(src);
+        if (st.isFile()) {
+            if (fs.existsSync(target)) {
+                console.log(`\rDelete File: ${target}`);
+                fs.unlinkSync(target);
+            }
+            // console.log(`\rCopy File: ${target}`);
+            const readStream = fs.createReadStream(src);
+            const writeStream = fs.createWriteStream(target);
+            readStream.pipe(writeStream);
+        }
+        if (st.isDirectory()) {
+            if (fs.existsSync(target)) {
+                // console.log(`\rDelete Directory: ${target}`);
+                delDir(target);
+            }
+            // console.log(`\rCreate Directory: ${target}`);
+            fs.mkdirSync(target);
+            copyDir(src, target);
+        }
+    });
+}
 
 function prepare() {
+    console.log("__dirname:", __dirname);
     const paths = fs.readdirSync(__dirname);
     paths.forEach(function (p) {
         console.log("file:", p);
     });
 
-    const backend = require("./backend/index.js");
-
-    // serverProcess = fork(require.resolve('./backend/index.js'))
-    // serverProcess.on('close', code => {
-    //     console.log('子线程已经退出', code)
-    // })
+    if (isDev) {
+        const backend = require("./backend/index.js");
+    } else {
+        // const resoutces = path.resolve(__dirname, "../");
+        // const src = path.join(__dirname, './backend/');
+        // const dest = path.join(resoutces, './backend/');
+        // if (!fs.existsSync(dest)) {
+        //     fs.mkdirSync(dest);
+        //     copyDir(src, dest);
+        // }
+        console.log("start server.");
+        setTimeout(() => {
+            const backend = require("../backend/index.js");
+        }, 500);
+    }
 }
 
 const createWindow = () => {
@@ -29,14 +89,13 @@ const createWindow = () => {
         }
     });
     // Menu.setApplicationMenu(null)
-    const packaged = app.isPackaged
-    if (!packaged) {
+    if (isDev) {
         mainWindow.webContents.openDevTools();
         goUrl = "http://127.0.0.1:8080"
     } else {
-        goUrl = "http://127.0.0.1:8888/index.html";
+        goUrl = "http://127.0.0.1:8888/public/index.html";
     }
-    console.log("packaged:", packaged);
+    console.log("isDev:", isDev);
     console.log("goUrl:", goUrl);
     mainWindow.loadFile('index.html');
     setTimeout(() => {
@@ -45,6 +104,7 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
+    isDev = !app.isPackaged;
     prepare();
     createWindow();
 
@@ -57,10 +117,7 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
-        if (serverProcess) {
-            process.kill(serverProcess.pid);
-        }
+        app.quit();
     }
 });
 

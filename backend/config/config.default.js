@@ -1,3 +1,7 @@
+const os = require('os');
+const TMP_DIR = os.tmpdir();
+console.log("TMP_DIR:", TMP_DIR);
+
 exports.keys = "12345678900987654321";
 
 exports.view = {
@@ -26,3 +30,7 @@ module.exports.middleware = ['errorHandler']
 module.exports.errorHandler = {
     match: '/api',
 };
+
+// exports.logger = {
+//     dir: TMP_DIR + '/logs/electron-admin',
+// };

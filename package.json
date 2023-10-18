@@ -7,7 +7,7 @@
     "dev": "electron .",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "cd frontend && npm run build && cd .. && electron-forge make"
+    "make": "electron-forge make"
   },
   "author": "jsbxyyx",
   "license": "ISC",
