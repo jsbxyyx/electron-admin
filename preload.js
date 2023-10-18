@@ -7,6 +7,5 @@ contextBridge.exposeInMainWorld('versions', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  onServerReady: (callback) => ipcRenderer.on('server-ready', callback),
   onGoUrl: (callback) => ipcRenderer.on('go-url', callback)
 });
