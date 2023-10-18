@@ -1,7 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    ignore: ["frontend"]
+    ignore: ["^/frontend"]
   },
   rebuildConfig: {},
   makers: [
