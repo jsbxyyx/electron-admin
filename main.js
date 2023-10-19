@@ -3,10 +3,11 @@ const path = require('node:path');
 const { fork } = require('node:child_process');
 const fs = require('fs');
 const os = require("os");
+const util = require("./util");
 
 var isDev;
 var goUrl = '';
-var version = 1;
+var version = "2";
 
 function prepare() {
     console.log("__dirname:", __dirname);
@@ -18,31 +19,37 @@ function prepare() {
     if (isDev) {
         const backend = require("./backend/index.js");
     } else {
-        var versionfile = path.join(os.tmpdir(), "./electron-admin.v")
+        const base_dir = os.homedir();
+
+        var versionfile = path.join(base_dir, "./.electron-admin.v")
+        const dest = path.join(base_dir, './backend/');
+
         var copy = false;
         if (!fs.existsSync(versionfile)) {
             fs.writeFileSync(versionfile, version);
             copy = true;
         } else {
             var fversion = fs.readFileSync(versionfile).toString("utf-8");
-            if (version != fversion) {
+            if (version != fversion || !fs.existsSync(dest)) {
+                fs.writeFileSync(versionfile, version);
                 copy = true;
             }
         }
         console.log("copy:", copy);
         if (copy) {
-            const dest = path.join(os.tmpdir(), './backend/');
-            fs.rmSync(dest, {recursive: true});
             const src = path.join(__dirname, './backend/');
             if (!fs.existsSync(dest)) {
                 fs.mkdirSync(dest);
-                fs.cpSync(src, dest, {recursive: true});
             }
+            util.copyDir(src, dest);
+            util.finish();
+        }
+        const backend_path = path.join(base_dir, "./backend/index.js");
+        while (!fs.existsSync(backend_path)) {
         }
         console.log("start server.");
-        setTimeout(() => {
-            const backend = require(path.join(os.tmpdir(), "./backend/index.js"));
-        }, 500);
+        console.log("backend_path:", backend_path);
+        const backend = require(backend_path);
     }
 }
 
