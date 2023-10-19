@@ -5,9 +5,11 @@ const fs = require('fs');
 const os = require("os");
 const util = require("./util");
 
+const app_name = "electron-admin";
+var app_version = "2";
+
 var isDev;
 var goUrl = '';
-var version = "2";
 
 function prepare() {
     console.log("__dirname:", __dirname);
@@ -21,33 +23,30 @@ function prepare() {
     } else {
         const base_dir = os.homedir();
 
-        var versionfile = path.join(base_dir, "./.electron-admin.v")
-        const dest = path.join(base_dir, './backend/');
+        var versionfile = path.join(base_dir, `./${app_name}.v`)
+        const destdir = path.join(base_dir, `./${app_name}/`);
 
         var copy = false;
         if (!fs.existsSync(versionfile)) {
-            fs.writeFileSync(versionfile, version);
+            fs.writeFileSync(versionfile, app_version);
             copy = true;
         } else {
             var fversion = fs.readFileSync(versionfile).toString("utf-8");
-            if (version != fversion || !fs.existsSync(dest)) {
-                fs.writeFileSync(versionfile, version);
+            if (app_version != fversion || !fs.existsSync(destdir)) {
+                fs.writeFileSync(versionfile, app_version);
                 copy = true;
             }
         }
         console.log("copy:", copy);
         if (copy) {
             const src = path.join(__dirname, './backend/');
-            if (!fs.existsSync(dest)) {
-                fs.mkdirSync(dest);
+            if (!fs.existsSync(destdir)) {
+                fs.mkdirSync(destdir);
             }
-            util.copyDir(src, dest);
-            util.finish();
+            util.copyDir(src, destdir);
+            console.log('\n> Copy complete!\n');
         }
-        const backend_path = path.join(base_dir, "./backend/index.js");
-        while (!fs.existsSync(backend_path)) {
-        }
-        console.log("start server.");
+        const backend_path = path.join(destdir, "./index.js");
         console.log("backend_path:", backend_path);
         const backend = require(backend_path);
     }

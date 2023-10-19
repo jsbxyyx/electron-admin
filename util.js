@@ -51,12 +51,7 @@ function copyDir(source, dest) {
     });
 }
 
-function finish() {
-    console.log(`\n> Copy complete!\n`);
-}
-
 module.exports = {
     delDir,
-    copyDir,
-    finish
+    copyDir
 }

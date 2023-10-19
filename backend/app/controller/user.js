@@ -7,6 +7,7 @@ class UserController extends Controller {
         const dataList = await ctx.service.user.list(page);
         this.ctx.body = {
             code: 200,
+            message: "ok",
             data: dataList
         };
     }
