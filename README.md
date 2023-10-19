@@ -29,5 +29,6 @@ npm run dev
 
 # 打包
 ```
+cd frontend && npm run build && cd ..
 npm run make
 ```
