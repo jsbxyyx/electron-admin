@@ -1,10 +1,18 @@
 # node
-`v16.13.2`
+```
+v16.13.2
+
+vim ~/.npmrc
+registry=https://registry.npmmirror.com
+disturl=https://npmmirror.com/mirrors/node
+electron_mirror=https://npm.taobao.org/mirrors/electron/
+```
 
 # 安装依赖
 ```
-npm i
 cd frontend && npm i && cd ..
+cd backend && npm i && cd ..
+npm i
 ```
 
 # 开发
