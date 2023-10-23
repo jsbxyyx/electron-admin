@@ -11,7 +11,6 @@ electron_mirror=https://npm.taobao.org/mirrors/electron/
 # 安装依赖
 ```
 cd frontend && npm i && cd ..
-cd backend && npm i && cd ..
 npm i
 ```
 
